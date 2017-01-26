@@ -1,0 +1,21 @@
+fum.es:
+    build: "./docker/"
+    ports:
+        - "80:80"
+    volumes:
+        - ./docker/web.conf:/etc/nginx/sites-available/default
+        - ./app:/app
+    environment:
+        - VIRTUAL_HOST=fum.es
+    tty: true
+    links:
+        - mongo:mongodb.dev
+
+mongo:
+    image: mongo:latest
+    ports:
+        - "27017:27017"
+    volumes:
+        - ./:/app
+    environment:
+        - VIRTUAL_HOST:mongodb.dev
