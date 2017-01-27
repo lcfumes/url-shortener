@@ -12,12 +12,14 @@ RUN \
   apt-get install -y python-software-properties && \
   apt-get install -y software-properties-common && \
   apt-get install -y nginx && \
-  apt-get install -y supervisor
+  apt-get install -y supervisor && \
+  apt-get install -y git && \
+  apt-get install zip unzip
 
 RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 4F4EA0AAE5267A6C
 RUN add-apt-repository -y ppa:ondrej/php
 RUN apt-get update
-RUN apt-get -y install php5.6 php5.6-dev php5.6-fpm php5.6-curl php5.6-mcrypt php5.6-json php5.6-cli php5.6-common php-pear php5.6-common php5.6-mongodb
+RUN apt-get -y install php5.6 php5.6-dev php5.6-fpm php5.6-curl php5.6-mcrypt php5.6-json php5.6-cli php5.6-common php-pear php5.6-common php5.6-mongodb php5.6-xml php5.6-zip
 
 # configure NGINX as non-daemon
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
