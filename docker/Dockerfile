@@ -1,6 +1,8 @@
 # Pull base image.
 FROM ubuntu:14.04
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Install.
 RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
@@ -12,15 +14,23 @@ RUN \
   apt-get install -y nginx && \
   apt-get install -y supervisor
 
-RUN apt-get -y install php5 php5-fpm php5-curl php5-mcrypt php5-json php5-cli php5-common php-pear 
+RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 4F4EA0AAE5267A6C
+RUN add-apt-repository -y ppa:ondrej/php
+RUN apt-get update
+RUN apt-get -y install php5.6 php5.6-dev php5.6-fpm php5.6-curl php5.6-mcrypt php5.6-json php5.6-cli php5.6-common php-pear php5.6-common php5.6-mongodb
 
-RUN pecl install mongodb
-RUN echo extension=mongodb.so > /etc/php5/cli/conf.d/mongodb.ini
-RUN echo extension=mongodb.so > /etc/php5/fpm/conf.d/mongodb.ini
+# configure NGINX as non-daemon
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-RUN sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php5/fpm/php-fpm.conf
+# configure php-fpm as non-daemon
+RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/5.6/fpm/php-fpm.conf
+
+# clear apt cache and remove unnecessary packages
+RUN apt-get autoclean && apt-get -y autoremove
 
 COPY supervisord.conf /etc/supervisord.conf
 COPY nginx.conf /etc/nginx/nginx.conf
+
+RUN service php5.6-fpm start
 
 CMD ["/usr/bin/supervisord", "-n"]

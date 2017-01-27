@@ -4,7 +4,7 @@ fum.es:
         - "80:80"
     volumes:
         - ./docker/web.conf:/etc/nginx/sites-available/default
-        - ./app:/app
+        - ./:/app
     environment:
         - VIRTUAL_HOST=fum.es
     tty: true
